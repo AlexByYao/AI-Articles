@@ -1,0 +1,74 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "difficulty": "easy",
+      "topic": "C++ 基础",
+      "question": "解释 C++ 中的左值与右值，以及它们对移动语义的影响。",
+      "answer": "左值有持久存储地址，右值通常是临时对象。移动语义利用右值引用将资源从临时对象转移，避免深拷贝，提高性能。"
+    },
+    {
+      "id": "q2",
+      "difficulty": "easy",
+      "topic": "Qt 信号槽",
+      "question": "Qt 信号槽机制的原理是什么？连接方式有哪些差异？",
+      "answer": "信号槽基于元对象系统（MOC）和事件循环。常见连接方式：Direct、Queued、Auto（跨线程时自动转为 Queued）。"
+    },
+    {
+      "id": "q3",
+      "difficulty": "medium",
+      "topic": "C++ 内存管理",
+      "question": "shared_ptr 循环引用如何解决？weak_ptr 的原理是什么？",
+      "answer": "循环引用会导致引用计数无法归零。用 weak_ptr 打破环：它不增加强引用计数，只保留弱引用并可尝试 lock 获取临时 shared_ptr。"
+    },
+    {
+      "id": "q4",
+      "difficulty": "medium",
+      "topic": "Qt 线程",
+      "question": "QThread 的正确使用方式是什么？为什么不建议子类化 QThread 直接重写 run？",
+      "answer": "建议把 QObject 移动到线程并用信号槽通信，避免 UI 线程直接操作。重写 run 容易破坏事件循环。"
+    },
+    {
+      "id": "q5",
+      "difficulty": "hard",
+      "topic": "C++ 模板",
+      "question": "什么是 SFINAE？能举例说明它如何用于模板函数选择吗？",
+      "answer": "SFINAE：替换失败不是错误。编译期替换失败的候选会被丢弃，用于实现 enable_if 的条件选择。"
+    },
+    {
+      "id": "q6",
+      "difficulty": "hard",
+      "topic": "Qt 事件系统",
+      "question": "Qt 的事件分发流程是什么？事件过滤器的执行顺序？",
+      "answer": "事件从 QCoreApplication 分发到目标对象；事件过滤器先于目标对象处理，可拦截并终止传递。"
+    },
+    {
+      "id": "q7",
+      "difficulty": "medium",
+      "topic": "C++ 对象模型",
+      "question": "虚函数表的存储结构是什么？多重继承下如何组织？",
+      "answer": "对象包含 vptr 指向 vtable。多继承时可能有多个 vptr，运行期通过调整 this 指针定位正确 vtable。"
+    },
+    {
+      "id": "q8",
+      "difficulty": "easy",
+      "topic": "Qt 基础",
+      "question": "Qt 中 QString 与 std::string 的主要差别？如何互转？",
+      "answer": "QString 使用 UTF-16 存储，支持国际化；std::string 是字节序列。可用 toStdString()/fromStdString() 转换。"
+    },
+    {
+      "id": "q9",
+      "difficulty": "medium",
+      "topic": "C++ STL",
+      "question": "vector 扩容策略如何影响迭代器失效？",
+      "answer": "扩容可能导致内存重新分配，所有迭代器失效。未扩容的插入只会使末尾迭代器失效。"
+    },
+    {
+      "id": "q10",
+      "difficulty": "hard",
+      "topic": "Qt 性能",
+      "question": "如何诊断和优化 Qt UI 卡顿？",
+      "answer": "避免耗时操作阻塞 UI 线程；使用 QThread/QtConcurrent；减少频繁重绘；使用 QElapsedTimer 分析热点。"
+    }
+  ]
+}
