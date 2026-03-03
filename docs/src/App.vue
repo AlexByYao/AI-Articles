@@ -5,7 +5,7 @@
         <div class="logo"></div>
         <div class="title">
           <h1>C++ / Qt 面试题库</h1>
-          <p>每日更新 · 搜索 · 难度筛选 · 低重复度</p>
+          <p>每日更新 · 搜索 · 难度/日期筛选 · 列表直显答案</p>
         </div>
       </div>
 
@@ -17,6 +17,14 @@
           <option value="medium">稍难</option>
           <option value="hard">较难</option>
         </select>
+        <select class="select" v-model="dateFilter">
+          <option value="all">全部日期</option>
+          <option v-for="d in dataDates" :key="d" :value="d">{{ d }}</option>
+        </select>
+        <select class="select" v-model="topicFilter">
+          <option value="all">全部主题</option>
+          <option v-for="t in topics" :key="t" :value="t">{{ t }}</option>
+        </select>
       </div>
     </div>
 
@@ -27,19 +35,18 @@
 
     <div v-for="(group, date) in grouped" :key="date" class="group">
       <h2>📅 {{ date }}</h2>
-      <div class="cards">
-        <div v-for="q in group" :key="q.id" class="card">
-          <h3>{{ q.question }}</h3>
+      <div class="list">
+        <div v-for="q in group" :key="q.id" class="item">
+          <div class="item-head">
+            <span class="qid">{{ q.id }}</span>
+            <h3>{{ q.question }}</h3>
+          </div>
           <div class="meta">
             <span class="chip">{{ mapDifficulty(q.difficulty) }}</span>
             <span class="chip">{{ q.topic }}</span>
           </div>
-
-          <div v-if="q.showAnswer" class="answer">
+          <div class="answer">
             {{ q.answer }}
-          </div>
-          <div class="toggle" @click="q.showAnswer = !q.showAnswer">
-            <span>{{ q.showAnswer ? "收起答案" : "展开答案" }}</span>
           </div>
         </div>
       </div>
@@ -55,6 +62,8 @@ import { ref, computed, onMounted } from 'vue'
 const all = ref([])
 const keyword = ref('')
 const difficulty = ref('all')
+const dateFilter = ref('all')
+const topicFilter = ref('all')
 
 const dataDates = ref([])
 
@@ -65,12 +74,19 @@ const mapDifficulty = (d) => {
   return d
 }
 
+const topics = computed(() => {
+  const set = new Set(all.value.map(q => q.topic).filter(Boolean))
+  return Array.from(set)
+})
+
 const filtered = computed(() => {
   return all.value.filter(q => {
     const okDiff = difficulty.value === 'all' || q.difficulty === difficulty.value
+    const okDate = dateFilter.value === 'all' || q.date === dateFilter.value
+    const okTopic = topicFilter.value === 'all' || q.topic === topicFilter.value
     const kw = keyword.value.trim().toLowerCase()
     const okKw = !kw || q.question.toLowerCase().includes(kw) || q.answer.toLowerCase().includes(kw)
-    return okDiff && okKw
+    return okDiff && okDate && okTopic && okKw
   })
 })
 
@@ -96,7 +112,7 @@ onMounted(async () => {
     const r = await fetch(`${import.meta.env.BASE_URL}data/${date}.json`)
     const j = await r.json()
     for (const q of j.questions) {
-      allData.push({ ...q, date, showAnswer: false })
+      allData.push({ ...q, date })
     }
   }
   all.value = allData
