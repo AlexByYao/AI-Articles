@@ -1,6 +1,13 @@
-﻿import re, json, pathlib
+import re, json, pathlib, sys, random
+
 root = pathlib.Path(r"E:\\code\\AI-Articles")
 md = root / "interview/cpp-qt/2026-03-03/questions.md"
+
+if len(sys.argv) < 2:
+    print("Usage: gen-200.py YYYY-MM-DD")
+    sys.exit(1)
+
+date = sys.argv[1]
 text = md.read_text(encoding='utf-8')
 
 entries = []
@@ -160,8 +167,9 @@ for t,q,a,d in cpp:
 for t,q,a,d in qt:
     add(idx, t, q, a, d); idx += 1
 
-# Trim/pad to 100 extras
 extra = extra[:100]
+random.seed(date)
+random.shuffle(extra)
 
 allq = base + extra
 
@@ -170,6 +178,6 @@ for i, q in enumerate(allq, start=1):
     q['id'] = "q{:03d}".format(i)
     final.append(q)
 
-out = root / "docs/public/data/2026-03-03.json"
+out = root / "docs/public/data/{}.json".format(date)
 out.write_text(json.dumps({'questions': final}, ensure_ascii=False, indent=2), encoding='utf-8')
 print("Wrote {} questions to {}".format(len(final), out))
